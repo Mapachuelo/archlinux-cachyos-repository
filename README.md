@@ -11,3 +11,10 @@ wget https://raw.githubusercontent.com/Mapachuelo/documentacion_linux/main/insta
 chmod +x install.sh
 ./install.sh
 ```
+Otra opción es 
+```
+git clone https://github.com/Mapachuelo/archlinux-cachyos-repository.git
+cd archlinux-cachyos-repository
+chmod +x install.sh 
+./install.sh
+```
