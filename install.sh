@@ -106,6 +106,7 @@ repo_cachyos(){
 
   else 
     echo "No tiene compatibilidad para cachyos"
+  fi
 }
 
 packeges_cachyos(){
