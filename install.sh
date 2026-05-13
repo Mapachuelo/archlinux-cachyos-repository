@@ -148,13 +148,14 @@ packeges_intel_arc(){
   neko_arc
   sudo pacman -Syu
 
-  sudo pacman -S --needed \
   mesa lib32-mesa \
   vulkan-intel lib32-vulkan-intel \
   vulkan-icd-loader lib32-vulkan-icd-loader \
   vulkan-validation-layers \
-  intel-media-driver \
-  libva libva-utils \
+  intel-graphics-compiler \
+  intel-media-driver lib32-intel-media-driver \
+  intel-media-sdk \
+  libva lib32-libva libva-utils \
   vpl-gpu-rt libvpl \
   intel-compute-runtime \
   level-zero-loader level-zero-headers \
@@ -167,10 +168,6 @@ packeges_intel_arc(){
   linux-firmware-intel \
   fwupd \
   libvdpau-va-gl
-
-  # Ver si con eso funciona normal las intel arc
-  # libva-intel-driver
-  # lib32-libva-intel-driver 
 }
 
 packeges_multimedia(){
