@@ -46,7 +46,7 @@ borrar_repos(){
 }
 
 repo_cachyos(){
-  if [ "$CACHYOS_REPO" == "x86_64_v3"]; then
+  if [ "$CACHYOS_REPO" == "x86_64_v3" ]; then
     clear
     echo "Instalación de cachyos v3"
     echo "--- Configurando CachyOS v3 ---"
@@ -73,7 +73,7 @@ repo_cachyos(){
     echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
-  elif [ "$CACHYOS_REPO" == "x86_64_v4"]; then
+  elif [ "$CACHYOS_REPO" == "x86_64_v4" ]; then
     clear
     echo "--- Configurando CachyOS v4 ---"
     neko_arc
@@ -146,8 +146,7 @@ packeges_intel_arc(){
   clear
   echo "instalación de paquetes para intel arc"
   neko_arc
-  sudo pacman -Syu
-
+  sudo pacman -Syu --noconfirm --needed \
   mesa lib32-mesa \
   vulkan-intel lib32-vulkan-intel \
   vulkan-icd-loader lib32-vulkan-icd-loader \
