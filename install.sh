@@ -35,11 +35,12 @@ EOF
 
 # prueba 
 # ver cual es compatible
-# /lib/ld-linux-x86-64.so.2 --help | grep supported
+CACHTOS_REPO="/lib/ld-linux-x86-64.so.2 --help | grep supported | awk '{print $1}'" 
 
 
-setup-cachy-v3() {
-  clear  
+repo_cachyos(){
+  if[ "$CACHTOS_REPO" == "x86_64_v3"]; then
+    echo "Instalación de cachyos v3"
     echo "--- Configurando CachyOS v3 ---"
     neko_arc
     
@@ -70,10 +71,7 @@ setup-cachy-v3() {
     echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
-}
-
-setup-cachy-v4() {
-  clear  
+  elif [ "$CACHTOS_REPO" == "x86_64_v4"]; then
     echo "--- Configurando CachyOS v4 ---"
     neko_arc
     
@@ -103,8 +101,10 @@ setup-cachy-v4() {
     echo -e "\n[cachyos-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-core-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-extra-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
-}
 
+  else 
+    echo "No tiene compatibilidad para cachyos"
+}
 
 packeges_cachyos(){
   clear
@@ -149,25 +149,29 @@ packeges_intel_arc(){
   neko_arc
   sudo pacman -Syu
 
-sudo pacman -S --needed \
-mesa lib32-mesa \
-vulkan-intel lib32-vulkan-intel \
-vulkan-icd-loader lib32-vulkan-icd-loader \
-vulkan-validation-layers \
-intel-media-driver \
-libva libva-utils \
-vpl-gpu-rt libvpl \
-intel-compute-runtime \
-level-zero-loader level-zero-headers \
-ocl-icd lib32-ocl-icd \
-intel-gmmlib \
-intel-gpu-tools \
-vulkan-tools \
-mesa-utils \
-clinfo \
-linux-firmware-intel \
-fwupd \
-libvdpau-va-gl
+  sudo pacman -S --needed \
+  mesa lib32-mesa \
+  vulkan-intel lib32-vulkan-intel \
+  vulkan-icd-loader lib32-vulkan-icd-loader \
+  vulkan-validation-layers \
+  intel-media-driver \
+  libva libva-utils \
+  vpl-gpu-rt libvpl \
+  intel-compute-runtime \
+  level-zero-loader level-zero-headers \
+  ocl-icd lib32-ocl-icd \
+  intel-gmmlib \
+  intel-gpu-tools \
+  vulkan-tools \
+  mesa-utils \
+  clinfo \
+  linux-firmware-intel \
+  fwupd \
+  libvdpau-va-gl
+
+  # Ver si con eso funciona normal las intel arc
+  # libva-intel-driver
+  # lib32-libva-intel-driver 
 }
 
 packeges_multimedia(){
@@ -176,10 +180,6 @@ packeges_multimedia(){
   neko_arc
   sudo pacman -S --noconfirm --needed ffmpeg gstreamer gst-libav gst-plugins-good \
   gst-plugins-bad gst-plugins-ugly gst-plugins-base aom dav1d rav1e svt-av1 x264 x265 
-
-# Ver si con eso funciona normal las intel arc
-# libva-intel-driver
-# lib32-libva-intel-driver 
 }
 
 packeges_xwayland(){
