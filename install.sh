@@ -278,7 +278,7 @@ elif [ "$modo_inst" == "2" ]; then
     echo "Iniciando modo manual..."
     
     OPCIONES=$(gum choose --no-limit \
-        "repo cachyos" \
+        "Repo cachyos" \
         "Paquetes CachyOS" \
         "Pacman ILoveCandy" \
         "Base (NetworkManager)" \
