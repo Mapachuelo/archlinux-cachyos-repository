@@ -253,12 +253,11 @@ packeges_dualboot(){
 
 clear
 neko_arc
-echo "¿Cómo desea realizar la instalación?"
-echo "1) Automática (Instala todo por defecto)"
-echo "2) Manual (Elegir qué componentes instalar)"
-read -p "Seleccione una opción [1-2]: " modo_inst
 
-if [ "$modo_inst" == "1" ]; then
+echo "¿Cómo desea realizar la instalación?"
+INSTALL=$(gum choose "Instalacion automatica" "Instalacion manual")
+
+if [ "$INSTALL" == "Instalacion automatica" ]; then
     echo "Iniciando instalación automática..."
     repo_cachyos
     packeges_cachyos
@@ -274,7 +273,7 @@ if [ "$modo_inst" == "1" ]; then
     packeges_dualboot
     echo "Instalación automática completada."
 
-elif [ "$modo_inst" == "2" ]; then
+elif [ "$INSTALL" == "Instalacion manual" ]; then
     echo "Iniciando modo manual..."
     
     OPCIONES=$(gum choose --no-limit \
