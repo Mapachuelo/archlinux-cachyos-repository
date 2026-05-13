@@ -2,6 +2,12 @@
 
 set -e 
 
+# Verificar/instalar gum
+if ! command -v gum &> /dev/null; then
+    echo "Instalando gum..."
+    sudo pacman -S --noconfirm --needed gum
+fi
+
 neko_arc(){ 
 cat << "EOF"
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠤⢤⡀⠀⢀⡤⠒⠢⣀⡠⠴⠒⢂⣠⡽⢧⠀⠀⠀
@@ -27,14 +33,23 @@ EOF
 }
 
 
-# prueba 
-# ver cual es compatible
-# /lib/ld-linux-x86-64.so.2 --help | grep supported
+CACHYOS_REPO=$(/lib/ld-linux-x86-64.so.2 --help | grep supported | grep -oE "v[34]" | head -n 1 | sed 's/v/x86_64_v/')
 
 
-setup-cachy-v3() {
-  clear  
-    echo "--- Configurando CachyOS v3 (Modo Restringido) ---"
+borrar_repos(){
+ sudo sed -i '/^\[cachyos.*v3\]$/,+1d' /etc/pacman.conf
+ sudo sed -i '/^\[cachyos.*\]$/,+1d' /etc/pacman.conf
+ sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
+ sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
+ sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
+
+}
+
+repo_cachyos(){
+  if [ "$CACHYOS_REPO" == "x86_64_v3" ]; then
+    clear
+    echo "Instalación de cachyos v3"
+    echo "--- Configurando CachyOS v3 ---"
     neko_arc
     
     sudo killall pacman 2>/dev/null || true
@@ -42,7 +57,6 @@ setup-cachy-v3() {
     sudo rm -f /var/cache/pacman/pkg/cachyos*
 
     sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
-    # Firmar la clave del repositorio
     sudo pacman-key --lsign-key F3B607488DB35A47    
 
     yes | sudo pacman -U --noconfirm \
@@ -52,14 +66,43 @@ setup-cachy-v3() {
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
-    sudo sed -i '/\[cachyos\]/,+2d' /etc/pacman.conf
-    sudo sed -i '/\[cachyos-v3\]/,+2d' /etc/pacman.conf
 
-    echo -e "\n[cachyos-v3]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-mirrorlist" | sudo tee -a /etc/pacman.conf
+    borrar_repos
+   
+    echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
+  elif [ "$CACHYOS_REPO" == "x86_64_v4" ]; then
+    clear
+    echo "--- Configurando CachyOS v4 ---"
+    neko_arc
+    
+    sudo killall pacman 2>/dev/null || true
+    sudo rm -f /var/lib/pacman/db.lck
+    sudo rm -f /var/cache/pacman/pkg/cachyos*
+
+    sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+    sudo pacman-key --lsign-key F3B607488DB35A47    
+
+    yes | sudo pacman -U --noconfirm \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-27-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-27-1-any.pkg.tar.zst'
+
+    sudo pacman-key --populate archlinux cachyos
+
+    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
+
+    borrar_repos
+
+    echo -e "\n[cachyos-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-core-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-extra-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
+
+    sudo pacman -Syy
+
+  else 
+    echo "No tiene compatibilidad para cachyos"
+  fi
 }
 
 packeges_cachyos(){
@@ -68,7 +111,7 @@ packeges_cachyos(){
   neko_arc
   sudo pacman -S --noconfirm --needed \
   linux-cachyos linux-cachyos-headers \
-  plasma-foreground-booster dmemcg-booster vkbasalt-cli \
+  plasma-foreground-booster dmemcg-booster \
   heroic-games-launcher-bin zen-browser-bin
 
 }
@@ -103,27 +146,27 @@ packeges_intel_arc(){
   clear
   echo "instalación de paquetes para intel arc"
   neko_arc
-  sudo pacman -Syu
-
-sudo pacman -S --needed \
-mesa lib32-mesa \
-vulkan-intel lib32-vulkan-intel \
-vulkan-icd-loader lib32-vulkan-icd-loader \
-vulkan-validation-layers \
-intel-media-driver \
-libva libva-utils \
-vpl-gpu-rt libvpl \
-intel-compute-runtime \
-level-zero-loader level-zero-headers \
-ocl-icd lib32-ocl-icd \
-intel-gmmlib \
-intel-gpu-tools \
-vulkan-tools \
-mesa-utils \
-clinfo \
-linux-firmware-intel \
-fwupd \
-libvdpau-va-gl
+  sudo pacman -Syu --noconfirm --needed \
+  mesa lib32-mesa \
+  vulkan-intel lib32-vulkan-intel \
+  vulkan-icd-loader lib32-vulkan-icd-loader \
+  vulkan-validation-layers \
+  intel-graphics-compiler \
+  intel-media-driver lib32-intel-media-driver \
+  intel-media-sdk \
+  libva lib32-libva libva-utils \
+  vpl-gpu-rt libvpl \
+  intel-compute-runtime \
+  level-zero-loader level-zero-headers \
+  ocl-icd lib32-ocl-icd \
+  intel-gmmlib \
+  intel-gpu-tools \
+  vulkan-tools \
+  mesa-utils \
+  clinfo \
+  linux-firmware-intel \
+  fwupd \
+  libvdpau-va-gl
 }
 
 packeges_multimedia(){
@@ -132,10 +175,6 @@ packeges_multimedia(){
   neko_arc
   sudo pacman -S --noconfirm --needed ffmpeg gstreamer gst-libav gst-plugins-good \
   gst-plugins-bad gst-plugins-ugly gst-plugins-base aom dav1d rav1e svt-av1 x264 x265 
-
-# Ver si con eso funciona normal las intel arc
-# libva-intel-driver
-# lib32-libva-intel-driver 
 }
 
 packeges_xwayland(){
@@ -214,14 +253,13 @@ packeges_dualboot(){
 
 clear
 neko_arc
-echo "¿Cómo desea realizar la instalación?"
-echo "1) Automática (Instala todo por defecto)"
-echo "2) Manual (Elegir qué componentes instalar)"
-read -p "Seleccione una opción [1-2]: " modo_inst
 
-if [ "$modo_inst" == "1" ]; then
+echo "¿Cómo desea realizar la instalación?"
+INSTALL=$(gum choose "Instalacion automatica" "Instalacion manual")
+
+if [ "$INSTALL" == "Instalacion automatica" ]; then
     echo "Iniciando instalación automática..."
-    setup-cachy-v3
+    repo_cachyos
     packeges_cachyos
     config_pacman
     config_base
@@ -235,27 +273,47 @@ if [ "$modo_inst" == "1" ]; then
     packeges_dualboot
     echo "Instalación automática completada."
 
-elif [ "$modo_inst" == "2" ]; then
+elif [ "$INSTALL" == "Instalacion manual" ]; then
     echo "Iniciando modo manual..."
     
-    preguntar() {
-        read -p "¿Desea $1? (s/n): " resp
-        [[ "$resp" == "s" || "$resp" == "S" ]]
-    }
+    OPCIONES=$(gum choose --no-limit \
+        "Repo Cachyos" \
+        "Paquetes CachyOS" \
+        "Pacman ILoveCandy" \
+        "Base (NetworkManager)" \
+        "Drivers Intel Arc" \
+        "Multimedia" \
+        "XWayland" \
+        "KDE Plasma" \
+        "Paquetes personalizados" \
+        "Flatpaks" \
+        "NvChad" \
+        "Fish shell" \
+        "Dualboot Windows")
 
-    if preguntar "configurar CachyOS v3 (Modo Restringido)"; then setup-cachy-v3; fi
-    if preguntar "instalar paquetes de CachyOS"; then packeges_cachyos; fi
-    if preguntar "configurar Pacman (ILoveCandy)"; then config_pacman; fi
-    if preguntar "instalar base (NetworkManager/Red)"; then config_base; fi
-    if preguntar "instalar drivers Intel Arc"; then packeges_intel_arc; fi
-    if preguntar "instalar paquetes Multimedia"; then packeges_multimedia; fi
-    if preguntar "instalar soporte XWayland"; then packeges_xwayland; fi
-    if preguntar "instalar KDE Plasma"; then packeges_kde; fi
-    if preguntar "instalar tus paquetes personalizados"; then packeges_personalized; fi
-    if preguntar "instalar Flatpaks"; then packeges_flatpak; fi
-    if preguntar "instalar NvChad (Neovim)"; then packeges_nvchad; fi
-    if preguntar "cambiar shell a Fish"; then shell_fish; fi
-    if preguntar "configurar Dualboot con Windows"; then packeges_dualboot; fi
+    if [[ -z "$OPCIONES" ]]; then
+        echo "No se seleccionó ninguna opción. Saliendo."
+        exit 1
+    fi
+
+    echo "Elegiste: $OPCIONES"
+    echo ""
+
+    [[ "$OPCIONES" == *"Repo Cachyos"* ]] && repo_cachyos
+    [[ "$OPCIONES" == *"Paquetes CachyOS"* ]] && packeges_cachyos
+    [[ "$OPCIONES" == *"Pacman ILoveCandy"* ]] && config_pacman
+    [[ "$OPCIONES" == *"Base (NetworkManager)"* ]] && config_base
+    [[ "$OPCIONES" == *"Drivers Intel Arc"* ]] && packeges_intel_arc
+    [[ "$OPCIONES" == *"Multimedia"* ]] && packeges_multimedia
+    [[ "$OPCIONES" == *"XWayland"* ]] && packeges_xwayland
+    [[ "$OPCIONES" == *"KDE Plasma"* ]] && packeges_kde
+    [[ "$OPCIONES" == *"Paquetes personalizados"* ]] && packeges_personalized
+    [[ "$OPCIONES" == *"Flatpaks"* ]] && packeges_flatpak
+    [[ "$OPCIONES" == *"NvChad"* ]] && packeges_nvchad
+    [[ "$OPCIONES" == *"Fish shell"* ]] && shell_fish
+    [[ "$OPCIONES" == *"Dualboot Windows"* ]] && packeges_dualboot
+
+    echo "Instalación manual completada."
 
 else
     echo "Opción no válida. Saliendo."

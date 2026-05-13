@@ -6,6 +6,8 @@ Para instalar el script, se debe ejecutar el siguiente comando en la terminal:
 
 Solo esta disponible para arch linux y solo verificado para las intel arc.
 
+- Solo tiene soporte para intel arc y procesadores de intel
+
 ```bash
 wget https://raw.githubusercontent.com/Mapachuelo/documentacion_linux/main/install.sh
 chmod +x install.sh
