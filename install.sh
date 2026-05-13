@@ -277,7 +277,7 @@ elif [ "$INSTALL" == "Instalacion manual" ]; then
     echo "Iniciando modo manual..."
     
     OPCIONES=$(gum choose --no-limit \
-        "Repo cachyos" \
+        "Repo Cachyos" \
         "Paquetes CachyOS" \
         "Pacman ILoveCandy" \
         "Base (NetworkManager)" \
