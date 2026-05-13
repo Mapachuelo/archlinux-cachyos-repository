@@ -57,42 +57,42 @@ setup-cachy-v3() {
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos v3)
+    # Configuración de pacman.conf (Arquitectura y Repos)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-v3\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-core-v3\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-extra-v3\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos\]$/,+2d' /etc/pacman.conf
+
+    sudo sed -i '/^\[cachyos.*v3\]$/,+1d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos\]$/,+1d' /etc/pacman.conf
+
+    # 2. Limpieza: Borrar las secciones estándar (core, extra, multilib) para reordenarlas
     sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
 
-    sudo tee -a /etc/pacman.conf << 'REPOS'
+    # 3. Inyección: Escribir todo el bloque de repositorios al final del archivo
+    echo -e "
+    [cachyos-v3]
+    Include = /etc/pacman.d/cachyos-v3-mirrorlist
 
-[cachyos-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
+    [cachyos-core-v3]
+    Include = /etc/pacman.d/cachyos-v3-mirrorlist
 
-[cachyos-core-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
+    [cachyos-extra-v3]
+    Include = /etc/pacman.d/cachyos-v3-mirrorlist
 
-[cachyos-extra-v3]
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
+    [cachyos]
+    Include = /etc/pacman.d/cachyos-mirrorlist
 
-[cachyos]
-Include = /etc/pacman.d/cachyos-mirrorlist
+    [core]
+    Usage = Sync Search Install
+    Include = /etc/pacman.d/mirrorlist
 
-[core]
-Usage = Sync Search Install
-Include = /etc/pacman.d/mirrorlist
+    [extra]
+    Usage = Sync Search Install
+    Include = /etc/pacman.d/mirrorlist
 
-[extra]
-Usage = Sync Search Install
-Include = /etc/pacman.d/mirrorlist
-
-[multilib]
-Usage = Sync Search Install
-Include = /etc/pacman.d/mirrorlist
-REPOS
+    [multilib]
+    Usage = Sync Search Install
+    Include = /etc/pacman.d/mirrorlist" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
 }
@@ -116,42 +116,42 @@ setup-cachy-v4() {
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos v4)
+    # Configuración de pacman.conf (Arquitectura y Repos)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-v4\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-core-v4\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-extra-v4\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos\]$/,+2d' /etc/pacman.conf
+
+    sudo sed -i '/^\[cachyos.*v4\]$/,+1d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos\]$/,+1d' /etc/pacman.conf
+
+    # 2. Limpieza: Borrar las secciones estándar (core, extra, multilib) para reordenarlas
     sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
 
-    sudo tee -a /etc/pacman.conf << 'REPOS'
+    # 3. Inyección: Escribir todo el bloque de repositorios al final del archivo
+    echo -e "
+    [cachyos-v4]
+    Include = /etc/pacman.d/cachyos-v4-mirrorlist
 
-[cachyos-v4]
-Include = /etc/pacman.d/cachyos-v4-mirrorlist
+    [cachyos-core-v4]
+    Include = /etc/pacman.d/cachyos-v4-mirrorlist
 
-[cachyos-core-v4]
-Include = /etc/pacman.d/cachyos-v4-mirrorlist
+    [cachyos-extra-v4]
+    Include = /etc/pacman.d/cachyos-v4-mirrorlist
 
-[cachyos-extra-v4]
-Include = /etc/pacman.d/cachyos-v4-mirrorlist
+    [cachyos]
+    Include = /etc/pacman.d/cachyos-mirrorlist
 
-[cachyos]
-Include = /etc/pacman.d/cachyos-mirrorlist
+    [core]
+    Usage = Sync Search Install
+    Include = /etc/pacman.d/mirrorlist
 
-[core]
-Usage = Sync Search Install
-Include = /etc/pacman.d/mirrorlist
+    [extra]
+    Usage = Sync Search Install
+    Include = /etc/pacman.d/mirrorlist
 
-[extra]
-Usage = Sync Search Install
-Include = /etc/pacman.d/mirrorlist
-
-[multilib]
-Usage = Sync Search Install
-Include = /etc/pacman.d/mirrorlist
-REPOS
+    [multilib]
+    Usage = Sync Search Install
+    Include = /etc/pacman.d/mirrorlist" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
 }
@@ -335,7 +335,6 @@ elif [ "$modo_inst" == "2" ]; then
     
     OPCIONES=$(gum choose --no-limit \
         "CachyOS v3" \
-        "CachyOS v4" \
         "Paquetes CachyOS" \
         "Pacman ILoveCandy" \
         "Base (NetworkManager)" \
@@ -358,7 +357,6 @@ elif [ "$modo_inst" == "2" ]; then
     echo ""
 
     [[ "$OPCIONES" == *"CachyOS v3"* ]] && setup-cachy-v3
-    [[ "$OPCIONES" == *"CachyOS v4"* ]] && setup-cachy-v4
     [[ "$OPCIONES" == *"Paquetes CachyOS"* ]] && packeges_cachyos
     [[ "$OPCIONES" == *"Pacman ILoveCandy"* ]] && config_pacman
     [[ "$OPCIONES" == *"Base (NetworkManager)"* ]] && config_base
