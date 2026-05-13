@@ -2,6 +2,12 @@
 
 set -e 
 
+# Verificar/instalar gum
+if ! command -v gum &> /dev/null; then
+    echo "Instalando gum..."
+    sudo pacman -S --noconfirm --needed gum
+fi
+
 neko_arc(){ 
 cat << "EOF"
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⠤⢤⡀⠀⢀⡤⠒⠢⣀⡠⠴⠒⢂⣠⡽⢧⠀⠀⠀
@@ -42,7 +48,6 @@ setup-cachy-v3() {
     sudo rm -f /var/cache/pacman/pkg/cachyos*
 
     sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
-    # Firmar la clave del repositorio
     sudo pacman-key --lsign-key F3B607488DB35A47    
 
     yes | sudo pacman -U --noconfirm \
@@ -54,13 +59,43 @@ setup-cachy-v3() {
 
     # Configuración de pacman.conf (Arquitectura y Repos)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
-    sudo sed -i '/\[cachyos\]/,+2d' /etc/pacman.conf
-    sudo sed -i '/\[cachyos-v3\]/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-v3\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos\]$/,+2d' /etc/pacman.conf
 
     echo -e "\n[cachyos-v3]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-mirrorlist" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
 }
+
+setup-cachy-v4() {
+  clear  
+    echo "--- Configurando CachyOS v3 (Modo Restringido) ---"
+    neko_arc
+    
+    sudo killall pacman 2>/dev/null || true
+    sudo rm -f /var/lib/pacman/db.lck
+    sudo rm -f /var/cache/pacman/pkg/cachyos*
+
+    sudo pacman-key --recv-keys F3B607488DB35A47 --keyserver keyserver.ubuntu.com
+    sudo pacman-key --lsign-key F3B607488DB35A47    
+
+    yes | sudo pacman -U --noconfirm \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-27-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-27-1-any.pkg.tar.zst'
+
+    sudo pacman-key --populate archlinux cachyos
+
+    # Configuración de pacman.conf (Arquitectura y Repos)
+    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-v3\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos\]$/,+2d' /etc/pacman.conf
+
+    echo -e "\n[cachyos-v3]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-mirrorlist" | sudo tee -a /etc/pacman.conf
+
+    sudo pacman -Syy
+}
+
 
 packeges_cachyos(){
   clear
@@ -238,24 +273,44 @@ if [ "$modo_inst" == "1" ]; then
 elif [ "$modo_inst" == "2" ]; then
     echo "Iniciando modo manual..."
     
-    preguntar() {
-        read -p "¿Desea $1? (s/n): " resp
-        [[ "$resp" == "s" || "$resp" == "S" ]]
-    }
+    OPCIONES=$(gum choose --no-limit \
+        "CachyOS v3" \
+        "Paquetes CachyOS" \
+        "Pacman ILoveCandy" \
+        "Base (NetworkManager)" \
+        "Drivers Intel Arc" \
+        "Multimedia" \
+        "XWayland" \
+        "KDE Plasma" \
+        "Paquetes personalizados" \
+        "Flatpaks" \
+        "NvChad" \
+        "Fish shell" \
+        "Dualboot Windows")
 
-    if preguntar "configurar CachyOS v3 (Modo Restringido)"; then setup-cachy-v3; fi
-    if preguntar "instalar paquetes de CachyOS"; then packeges_cachyos; fi
-    if preguntar "configurar Pacman (ILoveCandy)"; then config_pacman; fi
-    if preguntar "instalar base (NetworkManager/Red)"; then config_base; fi
-    if preguntar "instalar drivers Intel Arc"; then packeges_intel_arc; fi
-    if preguntar "instalar paquetes Multimedia"; then packeges_multimedia; fi
-    if preguntar "instalar soporte XWayland"; then packeges_xwayland; fi
-    if preguntar "instalar KDE Plasma"; then packeges_kde; fi
-    if preguntar "instalar tus paquetes personalizados"; then packeges_personalized; fi
-    if preguntar "instalar Flatpaks"; then packeges_flatpak; fi
-    if preguntar "instalar NvChad (Neovim)"; then packeges_nvchad; fi
-    if preguntar "cambiar shell a Fish"; then shell_fish; fi
-    if preguntar "configurar Dualboot con Windows"; then packeges_dualboot; fi
+    if [[ -z "$OPCIONES" ]]; then
+        echo "No se seleccionó ninguna opción. Saliendo."
+        exit 1
+    fi
+
+    echo "Elegiste: $OPCIONES"
+    echo ""
+
+    [[ "$OPCIONES" == *"CachyOS v3"* ]] && setup-cachy-v3
+    [[ "$OPCIONES" == *"Paquetes CachyOS"* ]] && packeges_cachyos
+    [[ "$OPCIONES" == *"Pacman ILoveCandy"* ]] && config_pacman
+    [[ "$OPCIONES" == *"Base (NetworkManager)"* ]] && config_base
+    [[ "$OPCIONES" == *"Drivers Intel Arc"* ]] && packeges_intel_arc
+    [[ "$OPCIONES" == *"Multimedia"* ]] && packeges_multimedia
+    [[ "$OPCIONES" == *"XWayland"* ]] && packeges_xwayland
+    [[ "$OPCIONES" == *"KDE Plasma"* ]] && packeges_kde
+    [[ "$OPCIONES" == *"Paquetes personalizados"* ]] && packeges_personalized
+    [[ "$OPCIONES" == *"Flatpaks"* ]] && packeges_flatpak
+    [[ "$OPCIONES" == *"NvChad"* ]] && packeges_nvchad
+    [[ "$OPCIONES" == *"Fish shell"* ]] && shell_fish
+    [[ "$OPCIONES" == *"Dualboot Windows"* ]] && packeges_dualboot
+
+    echo "Instalación manual completada."
 
 else
     echo "Opción no válida. Saliendo."
