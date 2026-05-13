@@ -1,8 +1,0 @@
-
-[cachyos-v3]
-Usage = Sync Search Install
-Include = /etc/pacman.d/cachyos-v3-mirrorlist
-
-[cachyos]
-Usage = Sync Search Install
-Include = /etc/pacman.d/cachyos-mirrorlist
