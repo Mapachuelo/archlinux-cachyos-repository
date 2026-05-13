@@ -35,11 +35,12 @@ EOF
 
 # prueba 
 # ver cual es compatible
-CACHTOS_REPO="/lib/ld-linux-x86-64.so.2 --help | grep supported | awk '{print $1}'" 
+CACHYOS_REPO=$(/lib/ld-linux-x86-64.so.2 --help | grep supported | grep -oE "v[34]" | head -n 1 | sed 's/v/x86_64_v/')
 
 
 repo_cachyos(){
-  if[ "$CACHTOS_REPO" == "x86_64_v3"]; then
+  if [ "$CACHYOS_REPO" == "x86_64_v3"]; then
+    clear
     echo "Instalación de cachyos v3"
     echo "--- Configurando CachyOS v3 ---"
     neko_arc
@@ -71,7 +72,8 @@ repo_cachyos(){
     echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
-  elif [ "$CACHTOS_REPO" == "x86_64_v4"]; then
+  elif [ "$CACHYOS_REPO" == "x86_64_v4"]; then
+    clear
     echo "--- Configurando CachyOS v4 ---"
     neko_arc
     
@@ -265,7 +267,7 @@ read -p "Seleccione una opción [1-2]: " modo_inst
 
 if [ "$modo_inst" == "1" ]; then
     echo "Iniciando instalación automática..."
-    setup-cachy-v3
+    repo_cachyos
     packeges_cachyos
     config_pacman
     config_base
@@ -283,7 +285,7 @@ elif [ "$modo_inst" == "2" ]; then
     echo "Iniciando modo manual..."
     
     OPCIONES=$(gum choose --no-limit \
-        "CachyOS v3" \
+        "repo cachyos" \
         "Paquetes CachyOS" \
         "Pacman ILoveCandy" \
         "Base (NetworkManager)" \
@@ -305,7 +307,7 @@ elif [ "$modo_inst" == "2" ]; then
     echo "Elegiste: $OPCIONES"
     echo ""
 
-    [[ "$OPCIONES" == *"CachyOS v3"* ]] && setup-cachy-v3
+    [[ "$OPCIONES" == *"Repo Cachyos"* ]] && repo_cachyos
     [[ "$OPCIONES" == *"Paquetes CachyOS"* ]] && packeges_cachyos
     [[ "$OPCIONES" == *"Pacman ILoveCandy"* ]] && config_pacman
     [[ "$OPCIONES" == *"Base (NetworkManager)"* ]] && config_base
