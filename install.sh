@@ -33,10 +33,17 @@ EOF
 }
 
 
-# prueba 
-# ver cual es compatible
 CACHYOS_REPO=$(/lib/ld-linux-x86-64.so.2 --help | grep supported | grep -oE "v[34]" | head -n 1 | sed 's/v/x86_64_v/')
 
+
+borrar_repos(){
+ sudo sed -i '/^\[cachyos.*v3\]$/,+1d' /etc/pacman.conf
+ sudo sed -i '/^\[cachyos.*\]$/,+1d' /etc/pacman.conf
+ sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
+ sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
+ sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
+
+}
 
 repo_cachyos(){
   if [ "$CACHYOS_REPO" == "x86_64_v3"]; then
@@ -59,16 +66,10 @@ repo_cachyos(){
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
 
-    sudo sed -i '/^\[cachyos.*v3\]$/,+1d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos.*\]$/,+1d' /etc/pacman.conf
-    sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
-
-    # 3. Inyección: Escribir todo el bloque de repositorios al final del archivo
+    borrar_repos
+   
     echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
@@ -91,15 +92,10 @@ repo_cachyos(){
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
 
-    sudo sed -i '/^\[cachyos.*v4\]$/,+1d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos.*\]$/,+1d' /etc/pacman.conf
-    sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
-    sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
-    
+    borrar_repos
+
     echo -e "\n[cachyos-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-core-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-extra-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
