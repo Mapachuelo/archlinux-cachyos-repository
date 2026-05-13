@@ -61,38 +61,13 @@ setup-cachy-v3() {
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
 
     sudo sed -i '/^\[cachyos.*v3\]$/,+1d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos\]$/,+1d' /etc/pacman.conf
-
-    # 2. Limpieza: Borrar las secciones estándar (core, extra, multilib) para reordenarlas
+    sudo sed -i '/^\[cachyos.*\]$/,+1d' /etc/pacman.conf
     sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
 
     # 3. Inyección: Escribir todo el bloque de repositorios al final del archivo
-    echo -e "
-    [cachyos-v3]
-    Include = /etc/pacman.d/cachyos-v3-mirrorlist
-
-    [cachyos-core-v3]
-    Include = /etc/pacman.d/cachyos-v3-mirrorlist
-
-    [cachyos-extra-v3]
-    Include = /etc/pacman.d/cachyos-v3-mirrorlist
-
-    [cachyos]
-    Include = /etc/pacman.d/cachyos-mirrorlist
-
-    [core]
-    Usage = Sync Search Install
-    Include = /etc/pacman.d/mirrorlist
-
-    [extra]
-    Usage = Sync Search Install
-    Include = /etc/pacman.d/mirrorlist
-
-    [multilib]
-    Usage = Sync Search Install
-    Include = /etc/pacman.d/mirrorlist" | sudo tee -a /etc/pacman.conf
+    echo -e "\n[cachyos-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-core-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos-extra-v3]\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
 }
@@ -120,38 +95,12 @@ setup-cachy-v4() {
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
 
     sudo sed -i '/^\[cachyos.*v4\]$/,+1d' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos\]$/,+1d' /etc/pacman.conf
-
-    # 2. Limpieza: Borrar las secciones estándar (core, extra, multilib) para reordenarlas
+    sudo sed -i '/^\[cachyos.*\]$/,+1d' /etc/pacman.conf
     sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
-
-    # 3. Inyección: Escribir todo el bloque de repositorios al final del archivo
-    echo -e "
-    [cachyos-v4]
-    Include = /etc/pacman.d/cachyos-v4-mirrorlist
-
-    [cachyos-core-v4]
-    Include = /etc/pacman.d/cachyos-v4-mirrorlist
-
-    [cachyos-extra-v4]
-    Include = /etc/pacman.d/cachyos-v4-mirrorlist
-
-    [cachyos]
-    Include = /etc/pacman.d/cachyos-mirrorlist
-
-    [core]
-    Usage = Sync Search Install
-    Include = /etc/pacman.d/mirrorlist
-
-    [extra]
-    Usage = Sync Search Install
-    Include = /etc/pacman.d/mirrorlist
-
-    [multilib]
-    Usage = Sync Search Install
-    Include = /etc/pacman.d/mirrorlist" | sudo tee -a /etc/pacman.conf
+    
+    echo -e "\n[cachyos-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-core-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos-extra-v4]\nInclude = /etc/pacman.d/cachyos-v4-mirrorlist\n\n[cachyos]\nInclude = /etc/pacman.d/cachyos-mirrorlist\n\n[core]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[extra]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n\n[multilib]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/mirrorlist\n" | sudo tee -a /etc/pacman.conf
 
     sudo pacman -Syy
 }
