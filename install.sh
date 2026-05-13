@@ -112,7 +112,7 @@ packeges_cachyos(){
   neko_arc
   sudo pacman -S --noconfirm --needed \
   linux-cachyos linux-cachyos-headers \
-  plasma-foreground-booster dmemcg-booster vkbasalt-cli \
+  plasma-foreground-booster dmemcg-booster \
   heroic-games-launcher-bin zen-browser-bin
 
 }
