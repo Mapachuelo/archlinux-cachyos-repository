@@ -40,7 +40,7 @@ EOF
 
 setup-cachy-v3() {
   clear  
-    echo "--- Configurando CachyOS v3 (Modo Restringido) ---"
+    echo "--- Configurando CachyOS v3 ---"
     neko_arc
     
     sudo killall pacman 2>/dev/null || true
@@ -57,19 +57,49 @@ setup-cachy-v3() {
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos)
+    # Configuración de pacman.conf (Arquitectura y Repos v3)
     sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
     sudo sed -i '/^\[cachyos-v3\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-core-v3\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-extra-v3\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[cachyos\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
 
-    echo -e "\n[cachyos-v3]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-mirrorlist" | sudo tee -a /etc/pacman.conf
+    sudo tee -a /etc/pacman.conf << 'REPOS'
+
+[cachyos-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+
+[cachyos-core-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+
+[cachyos-extra-v3]
+Include = /etc/pacman.d/cachyos-v3-mirrorlist
+
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+
+[core]
+Usage = Sync Search Install
+Include = /etc/pacman.d/mirrorlist
+
+[extra]
+Usage = Sync Search Install
+Include = /etc/pacman.d/mirrorlist
+
+[multilib]
+Usage = Sync Search Install
+Include = /etc/pacman.d/mirrorlist
+REPOS
 
     sudo pacman -Syy
 }
 
 setup-cachy-v4() {
   clear  
-    echo "--- Configurando CachyOS v3 (Modo Restringido) ---"
+    echo "--- Configurando CachyOS v4 ---"
     neko_arc
     
     sudo killall pacman 2>/dev/null || true
@@ -86,12 +116,42 @@ setup-cachy-v4() {
 
     sudo pacman-key --populate archlinux cachyos
 
-    # Configuración de pacman.conf (Arquitectura y Repos)
-    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
-    sudo sed -i '/^\[cachyos-v3\]$/,+2d' /etc/pacman.conf
+    # Configuración de pacman.conf (Arquitectura y Repos v4)
+    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-v4\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-core-v4\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[cachyos-extra-v4\]$/,+2d' /etc/pacman.conf
     sudo sed -i '/^\[cachyos\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[core\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[extra\]$/,+2d' /etc/pacman.conf
+    sudo sed -i '/^\[multilib\]$/,+2d' /etc/pacman.conf
 
-    echo -e "\n[cachyos-v3]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-v3-mirrorlist\n\n[cachyos]\nUsage = Sync Search Install\nInclude = /etc/pacman.d/cachyos-mirrorlist" | sudo tee -a /etc/pacman.conf
+    sudo tee -a /etc/pacman.conf << 'REPOS'
+
+[cachyos-v4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+
+[cachyos-core-v4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+
+[cachyos-extra-v4]
+Include = /etc/pacman.d/cachyos-v4-mirrorlist
+
+[cachyos]
+Include = /etc/pacman.d/cachyos-mirrorlist
+
+[core]
+Usage = Sync Search Install
+Include = /etc/pacman.d/mirrorlist
+
+[extra]
+Usage = Sync Search Install
+Include = /etc/pacman.d/mirrorlist
+
+[multilib]
+Usage = Sync Search Install
+Include = /etc/pacman.d/mirrorlist
+REPOS
 
     sudo pacman -Syy
 }
@@ -275,6 +335,7 @@ elif [ "$modo_inst" == "2" ]; then
     
     OPCIONES=$(gum choose --no-limit \
         "CachyOS v3" \
+        "CachyOS v4" \
         "Paquetes CachyOS" \
         "Pacman ILoveCandy" \
         "Base (NetworkManager)" \
@@ -297,6 +358,7 @@ elif [ "$modo_inst" == "2" ]; then
     echo ""
 
     [[ "$OPCIONES" == *"CachyOS v3"* ]] && setup-cachy-v3
+    [[ "$OPCIONES" == *"CachyOS v4"* ]] && setup-cachy-v4
     [[ "$OPCIONES" == *"Paquetes CachyOS"* ]] && packeges_cachyos
     [[ "$OPCIONES" == *"Pacman ILoveCandy"* ]] && config_pacman
     [[ "$OPCIONES" == *"Base (NetworkManager)"* ]] && config_base
