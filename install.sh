@@ -92,7 +92,7 @@ repo_cachyos(){
 
     sudo pacman-key --populate archlinux cachyos
 
-    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
+    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3 x86_64_v4/' /etc/pacman.conf
 
     borrar_repos
 
