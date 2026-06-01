@@ -66,7 +66,11 @@ repo_cachyos(){
 
     sudo pacman-key --populate archlinux cachyos
 
-    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
+    sudo sed -i 's/^#\?Architecture\s*=.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
+
+    if ! grep -q '^Architecture =' /etc/pacman.conf; then
+        sudo sed -i '/^\[options\]/a Architecture = x86_64 x86_64_v3' /etc/pacman.conf
+    fi
 
     borrar_repos
    
@@ -92,7 +96,11 @@ repo_cachyos(){
 
     sudo pacman-key --populate archlinux cachyos
 
-    sudo sed -i 's/^#Architecture =.*/Architecture = x86_64 x86_64_v4/' /etc/pacman.conf
+    sudo sed -i 's/^#\?Architecture\s*=.*/Architecture = x86_64  x86_64 x86_64_v3 x86_64_v4/' /etc/pacman.conf
+
+    if ! grep -q '^Architecture =' /etc/pacman.conf; then
+        sudo sed -i '/^\[options\]/a Architecture = x86_64 x86_64 x86_64_v3 x86_64_v4' /etc/pacman.conf
+    fi
 
     borrar_repos
 
