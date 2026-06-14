@@ -210,10 +210,13 @@ packeges_personalized(){
   base-devel git less vlc-plugins-all vlc obs-studio gwenview ffmpegthumbs \
   scrcpy android-tools kdeconnect ark unrar zip unzip xclip xsel lact mangohud \
   lib32-mangohud gamemode gamescope steam noto-fonts-cjk goverlay krita python-pyqt6 fastfetch \
-  prismlauncher ntfs-3g gparted drawio-desktop opentoonz libresprite alsa-scarlett-gui \
+  prismlauncher ntfs-3g drawio-desktop opentoonz libresprite alsa-scarlett-gui \
   easyeffects reaper neovim obsidian thunderbird podman podman-compose docker docker-compose \
   podman-desktop btop nvtop musescore lsp-plugins-lv2 lsp-plugins-vst3 ncdu
 }
+
+# Paquetes para partición de discos
+# f2fs-tools btrfs-progs xfsprogs e2fsprogs dosfstools exfatprogs ntfsprogs cryptsetup lvm2
 
 packeges_nvchad(){
   clear
