@@ -211,8 +211,8 @@ packeges_personalized(){
   scrcpy android-tools kdeconnect ark unrar zip unzip xclip xsel lact mangohud \
   lib32-mangohud gamemode gamescope steam noto-fonts-cjk goverlay krita python-pyqt6 fastfetch \
   prismlauncher ntfs-3g drawio-desktop opentoonz libresprite alsa-scarlett-gui \
-  easyeffects reaper neovim obsidian thunderbird podman podman-compose docker docker-compose \
-  podman-desktop btop nvtop musescore lsp-plugins-lv2 lsp-plugins-vst3 ncdu
+  easyeffects reaper neovim obsidian thunderbird podman podman-compose \
+  podman-desktop btop nvtop musescore lsp-plugins-lv2 lsp-plugins-vst3 ncdu plasma-systemmonitor
 }
 
 # Paquetes para partición de discos
