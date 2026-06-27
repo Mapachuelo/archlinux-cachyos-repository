@@ -60,10 +60,10 @@ repo_cachyos(){
     sudo pacman-key --lsign-key F3B607488DB35A47    
 
     yes | sudo pacman -U --noconfirm \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring.pkg.tar.zst' \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist.pkg.tar.zst' \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist.pkg.tar.zst'
-    
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-27-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v3-mirrorlist-27-1-any.pkg.tar.zst'
+
     sudo pacman-key --populate archlinux cachyos
 
     sudo sed -i 's/^#\?Architecture\s*=.*/Architecture = x86_64 x86_64_v3/' /etc/pacman.conf
@@ -90,10 +90,10 @@ repo_cachyos(){
     sudo pacman-key --lsign-key F3B607488DB35A47    
 
     yes | sudo pacman -U --noconfirm \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring.pkg.tar.zst' \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist.pkg.tar.zst' \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist.pkg.tar.zst'
-    
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-27-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-v4-mirrorlist-27-1-any.pkg.tar.zst'
+
     sudo pacman-key --populate archlinux cachyos
 
     sudo sed -i 's/^#\?Architecture\s*=.*/Architecture = x86_64  x86_64 x86_64_v3 x86_64_v4/' /etc/pacman.conf
@@ -121,9 +121,9 @@ repo_cachyos(){
     sudo pacman-key --lsign-key F3B607488DB35A47    
 
     yes | sudo pacman -U --noconfirm \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring.pkg.tar.zst' \
-        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist.pkg.tar.zst'
-    
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-keyring-20240331-1-any.pkg.tar.zst' \
+        'https://mirror.cachyos.org/repo/x86_64/cachyos/cachyos-mirrorlist-27-1-any.pkg.tar.zst' 
+
     sudo pacman-key --populate archlinux cachyos
 
     sudo sed -i 's/^#\?Architecture\s*=.*/Architecture = x86_64 ' /etc/pacman.conf
